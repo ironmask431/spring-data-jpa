@@ -17,7 +17,7 @@ class MemberRepositoryTest {
 
     @Test
     void save() {
-        Member member = new Member("김나나");
+        Member member = new Member("장규리",21);
         memberRepository.save(member);
         Member savedMember = memberRepository.findById(member.getId()).orElseThrow(()-> new IllegalArgumentException());
         Assertions.assertEquals(member.getId(), savedMember.getId());
