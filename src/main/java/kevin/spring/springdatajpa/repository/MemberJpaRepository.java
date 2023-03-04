@@ -6,6 +6,9 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+/**
+ * spring data jpa 를 사용하지않고 jpa EntityManager 를 직접 사용하는 예전 방식
+ */
 @Repository
 public class MemberJpaRepository {
     @PersistenceContext

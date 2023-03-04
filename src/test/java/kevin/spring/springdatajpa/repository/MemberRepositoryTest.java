@@ -11,16 +11,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-class MemberJpaRepositoryTest {
-
+class MemberRepositoryTest {
     @Autowired
-    MemberJpaRepository memberJpaRepository;
+    MemberRepository memberRepository;
 
     @Test
     void save() {
         Member member = new Member("김나나");
-        memberJpaRepository.save(member);
-        Member savedMember = memberJpaRepository.find(member.getId());
+        memberRepository.save(member);
+        Member savedMember = memberRepository.findById(member.getId()).orElseThrow(()-> new IllegalArgumentException());
         Assertions.assertEquals(member.getId(), savedMember.getId());
         Assertions.assertEquals(member.getUsername(), savedMember.getUsername());
     }
