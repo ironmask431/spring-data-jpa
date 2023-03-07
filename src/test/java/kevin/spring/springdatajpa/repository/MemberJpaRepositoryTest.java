@@ -53,6 +53,4 @@ class MemberJpaRepositoryTest {
         count = memberJpaRepository.count();
         assertEquals(count, 0);
     }
-
-
 }
