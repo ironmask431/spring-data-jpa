@@ -1,5 +1,6 @@
 package kevin.spring.springdatajpa.repository;
 
+import kevin.spring.springdatajpa.dto.MemberDto;
 import kevin.spring.springdatajpa.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -10,6 +11,7 @@ import java.util.List;
 /**
  * spring data jpa 는 인터페이스로 repository 선언 후 extends JpaRepository 해주면 완료
  * 개발자는 인터페이스만 선언해놓으면 spring data jpa가 자동으로 구현체를 만든다.
+ *
  * @Repository 어노테이션을 생략 가능하다.
  */
 public interface MemberRepository extends JpaRepository<Member, Long> {
@@ -23,4 +25,10 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     @Query("select m from Member m where m.username = :username and m.age = :age")
     List<Member> findUser(@Param("username") String username, @Param("age") int age);
+
+    @Query("select m.username from Member m")
+    List<String> findUserName();
+
+    @Query("select new kevin.spring.springdatajpa.dto.MemberDto(m.id, m.username, t.name) from Member m left join m.team t")
+    List<MemberDto> findMemberDto();
 }

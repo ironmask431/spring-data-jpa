@@ -1,6 +1,8 @@
 package kevin.spring.springdatajpa.repository;
 
+import kevin.spring.springdatajpa.dto.MemberDto;
 import kevin.spring.springdatajpa.entity.Member;
+import kevin.spring.springdatajpa.entity.Team;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,18 +20,31 @@ class MemberRepositoryTest {
     @Autowired
     MemberRepository memberRepository;
 
+    @Autowired
+    TeamRepository teamRepository;
+
     Member member1;
     Member member2;
     Member member3;
 
+    Team teamA;
+    Team teamB;
+
     @BeforeEach
     void init(){
-        member1 = new Member("장규리", 10);
-        member2 = new Member("장규리", 20);
-        member3 = new Member("송하영", 21);
+        teamA = new Team("teamA");
+        teamB = new Team("teamB");
+        teamRepository.save(teamA);
+        teamRepository.save(teamB);
+
+        member1 = new Member("장규리", 10, teamA);
+        member2 = new Member("장규리", 20, teamA);
+        member3 = new Member("송하영", 21, teamB);
         memberRepository.save(member1);
         memberRepository.save(member2);
         memberRepository.save(member3);
+
+
     }
 
     @Test
@@ -76,4 +91,13 @@ class MemberRepositoryTest {
         List<Member> result = memberRepository.findUser("장규리", 10);
         assertEquals(result.get(0), member1);
     }
+
+    @Test
+    void findMemberDto(){
+        List<MemberDto> memberDtos = memberRepository.findMemberDto();
+        for(MemberDto memberDto : memberDtos){
+            System.out.println("leesh - dto = "+memberDto);
+        }
+    }
+
 }
