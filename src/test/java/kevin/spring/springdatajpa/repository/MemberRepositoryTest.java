@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -97,6 +98,14 @@ class MemberRepositoryTest {
         List<MemberDto> memberDtos = memberRepository.findMemberDto();
         for(MemberDto memberDto : memberDtos){
             System.out.println("leesh - dto = "+memberDto);
+        }
+    }
+
+    @Test
+    void findBynames(){
+        List<Member> members = memberRepository.findByNames(Arrays.asList("장규리", "송하영"));
+        for(Member member : members){
+            System.out.println("leesh - member = "+member);
         }
     }
 

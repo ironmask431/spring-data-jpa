@@ -19,16 +19,23 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     //spring.io > spring data jpa 에서 쿼리메소드 가이드문서 활용하기.
     //https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods.query-creation
 
+    //메소드 이름으로 쿼리 생성
     List<Member> findByUsernameAndAgeGreaterThan(String username, int age);
 
     List<Member> findByUsername(String username);
 
+    // @Query, 리포지토리 메소드에 쿼리 정의하기
     @Query("select m from Member m where m.username = :username and m.age = :age")
     List<Member> findUser(@Param("username") String username, @Param("age") int age);
 
     @Query("select m.username from Member m")
     List<String> findUserName();
 
+    //DTO 조회하기
     @Query("select new kevin.spring.springdatajpa.dto.MemberDto(m.id, m.username, t.name) from Member m left join m.team t")
     List<MemberDto> findMemberDto();
+
+    //파라미터 바인딩
+    @Query("select m from Member m where m.username in :names")
+    List<Member> findByNames(@Param("names") List<String> names);
 }
