@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * spring data jpa 는 인터페이스로 repository 선언 후 extends JpaRepository 해주면 완료
@@ -38,4 +39,9 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     //파라미터 바인딩
     @Query("select m from Member m where m.username in :names")
     List<Member> findByNames(@Param("names") List<String> names);
+
+    //반환 타입 - 여러가지 반환타입으로 사용 할 수 있음.
+    List<Member> findListByUsername(String username); //컬렉션
+    Member findMemberByUsername(String username); //단건
+    Optional<Member> findOptionalByUsername(String username); // 단건 Optional
 }

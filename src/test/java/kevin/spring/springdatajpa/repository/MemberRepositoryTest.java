@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -107,6 +108,27 @@ class MemberRepositoryTest {
         for(Member member : members){
             System.out.println("leesh - member = "+member);
         }
+    }
+
+    @Test
+    void returnType() throws Exception {
+        List<Member> memberList = memberRepository.findListByUsername("송하영");
+        Member member = memberRepository.findMemberByUsername("송하영");
+        Optional<Member> optional = memberRepository.findOptionalByUsername("송하영");
+
+        System.out.println(memberList.get(0));
+
+        System.out.println(member);
+        System.out.println(optional.orElseThrow(() -> new Exception()));
+
+//        여러 반환타입으로 정상 조회됨
+//        Member(id=5, username=송하영, age=21)
+//        Member(id=5, username=송하영, age=21)
+//        Member(id=5, username=송하영, age=21)
+
+        //컬렉션타입으로 조회 시 값이 없으면 spirng data jpa 에서 빈 컬렉션을 반환해준다.
+        List<Member> nullList = memberRepository.findListByUsername("ㄹㅇㄴㄹㅇㄹ");
+        System.out.println("nullList.size() = "+nullList.size()); // 0
     }
 
 }
