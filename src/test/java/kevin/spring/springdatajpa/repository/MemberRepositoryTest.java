@@ -112,12 +112,17 @@ class MemberRepositoryTest {
 
     @Test
     void returnType() throws Exception {
-        List<Member> memberList = memberRepository.findListByUsername("송하영");
-        Member member = memberRepository.findMemberByUsername("송하영");
+        //컬렉션타입으로 조회 시 값이 없으면 spirng data jpa 에서 빈 empty 컬렉션을 반환해준다.
+        List<Member> memberList = memberRepository.findListByUsername("장규리");
+        //엔티티 단독 조회 시 result = 0 이면 null 로 리턴됨.
+        //엔티티 단독 조회 시 result2개 이상이면 exception 발생
+        Member member = memberRepository.findMemberByUsername("장규리");
+        //Optional<엔티티>타입으로 조회 시 result = 0 이면 비어있는 Optional 리턴.
+        //Optional<엔티티>타입으로 조회 시 result2개 이상이면 exception 발생
         Optional<Member> optional = memberRepository.findOptionalByUsername("송하영");
 
         System.out.println(memberList.get(0));
-
+        System.out.println(memberList.size());
         System.out.println(member);
         System.out.println(optional.orElseThrow(() -> new Exception()));
 
@@ -126,9 +131,8 @@ class MemberRepositoryTest {
 //        Member(id=5, username=송하영, age=21)
 //        Member(id=5, username=송하영, age=21)
 
-        //컬렉션타입으로 조회 시 값이 없으면 spirng data jpa 에서 빈 컬렉션을 반환해준다.
+        //컬렉션타입으로 조회 시 값이 없으면 spirng data jpa 에서 빈 empty 컬렉션을 반환해준다.
         List<Member> nullList = memberRepository.findListByUsername("ㄹㅇㄴㄹㅇㄹ");
         System.out.println("nullList.size() = "+nullList.size()); // 0
     }
-
 }
