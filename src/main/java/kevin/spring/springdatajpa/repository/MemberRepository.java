@@ -3,11 +3,11 @@ package kevin.spring.springdatajpa.repository;
 import kevin.spring.springdatajpa.dto.MemberDto;
 import kevin.spring.springdatajpa.entity.Member;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.awt.print.Pageable;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,4 +49,11 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     //spring data jpa 페이징
     Page<Member> findByAge(int age, Pageable pageable);
+
+    //spring data jpa 페이징 - jpql을 사용
+    //countQuery 를 명시하지 않을 시 기본 쿼리로 total count 조회.
+    //countQuery 성능이 낮을 경우 별도로 countQuery 를 선언해서 사용이 가능하다.
+    @Query(value = "select m from Member m left join m.team t where m.age = :age",
+    countQuery = "select count(m.username) from Member m where m.age = :age")
+    Page<Member> findByAgeJpql(@Param("age") int age, Pageable pageable);
 }

@@ -10,10 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.print.Pageable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -143,23 +143,40 @@ class MemberRepositoryTest {
     @Test
     void paging() {
         //given
-        member1 = new Member("양연제1", 15, teamA);
-        member1 = new Member("양연제2", 15, teamA);
-        member1 = new Member("양연제3", 15, teamA);
-        member1 = new Member("양연제4", 15, teamA);
-        member1 = new Member("양연제5", 15, teamA);
+        memberRepository.save(new Member("양연제1", 15, teamA));
+        memberRepository.save(new Member("양연제2", 15, teamA));
+        memberRepository.save(new Member("양연제3", 15, teamA));
+        memberRepository.save(new Member("양연제4", 15, teamA));
+        memberRepository.save(new Member("양연제5", 15, teamA));
 
-        int age = 10;
-        int offset = 0;
-        int limit = 3;
+        int age = 15;
 
         //pageRequest 객체 생성.
         PageRequest pageRequest =  PageRequest.of(0,3, Sort.by(Sort.Direction.DESC, "username"));
 
         //when
-        Page<Member> page = memberRepository.findByAge(age, (Pageable) pageRequest);
+        Page<Member> page = memberRepository.findByAge(age, pageRequest);
+
+        //jpql 사용 시
+        //Page<Member> page = memberRepository.findByAgeJpql(age, pageRequest);
+
+        //엔티티로 조회한 Page<entity> 를 Page<dto> 로 변환하는 법
+        Page<MemberDto> toMap = page.map(member -> new MemberDto(member.getId(),member.getUsername(),member.getTeam().getName()));
 
         //then
+        List<Member> content = page.getContent();
+        long totalElements = page.getTotalElements();
+        System.out.println("totalElements = "+totalElements);
+        for(Member member : content){
+            System.out.println("member = "+member);
+        }
+
+        assertEquals(content.size(), 3);
+        assertEquals(page.getTotalElements(),  5);
+        assertEquals(page.getNumber(), 0);
+        assertEquals(page.getTotalPages(), 2);
+        assertEquals(page.isFirst(), true);
+        assertEquals(page.hasNext(), true);
 
     }
 }
