@@ -2,10 +2,12 @@ package kevin.spring.springdatajpa.repository;
 
 import kevin.spring.springdatajpa.dto.MemberDto;
 import kevin.spring.springdatajpa.entity.Member;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.awt.print.Pageable;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,4 +46,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     List<Member> findListByUsername(String username); //컬렉션
     Member findMemberByUsername(String username); //단건
     Optional<Member> findOptionalByUsername(String username); // 단건 Optional
+
+    //spring data jpa 페이징
+    Page<Member> findByAge(int age, Pageable pageable);
 }

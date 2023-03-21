@@ -8,8 +8,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.awt.print.Pageable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -134,5 +138,28 @@ class MemberRepositoryTest {
         //컬렉션타입으로 조회 시 값이 없으면 spirng data jpa 에서 빈 empty 컬렉션을 반환해준다.
         List<Member> nullList = memberRepository.findListByUsername("ㄹㅇㄴㄹㅇㄹ");
         System.out.println("nullList.size() = "+nullList.size()); // 0
+    }
+
+    @Test
+    void paging() {
+        //given
+        member1 = new Member("양연제1", 15, teamA);
+        member1 = new Member("양연제2", 15, teamA);
+        member1 = new Member("양연제3", 15, teamA);
+        member1 = new Member("양연제4", 15, teamA);
+        member1 = new Member("양연제5", 15, teamA);
+
+        int age = 10;
+        int offset = 0;
+        int limit = 3;
+
+        //pageRequest 객체 생성.
+        PageRequest pageRequest =  PageRequest.of(0,3, Sort.by(Sort.Direction.DESC, "username"));
+
+        //when
+        Page<Member> page = memberRepository.findByAge(age, (Pageable) pageRequest);
+
+        //then
+
     }
 }
