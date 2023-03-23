@@ -5,6 +5,7 @@ import kevin.spring.springdatajpa.entity.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -56,4 +57,9 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query(value = "select m from Member m left join m.team t where m.age = :age",
     countQuery = "select count(m.username) from Member m where m.age = :age")
     Page<Member> findByAgeJpql(@Param("age") int age, Pageable pageable);
+
+    //update 쿼리를 사용시에는 @Modifying 어노테이션을 꼭 붙여줘야 한다.
+    @Modifying
+    @Query("update Member m set m.age = m.age + 1 where m.age >= :age")
+    int bulkAgePlus(@Param("age") int age);
 }

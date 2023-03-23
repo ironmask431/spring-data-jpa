@@ -178,4 +178,27 @@ class MemberRepositoryTest {
         assertEquals(page.hasNext(), true);
 
     }
+
+    //벌크성 수정 쿼리
+    //jpa에서는 기본적으로 조회한엔티티의 값을 변경 하면 더티체킹으로 업데이트가 자동실행되나,
+    //별도로 여러row의 데이터를 일괄 수정 시에는 엔티티를 모두 조회해서 값을 수정하는 것보다 update 쿼리를 직접 작성해주는게 더 효율적일 때도 있다.
+    //그러나 벌크성 수정 쿼리는 위험성이 있으므로 안쓰는것이 좋다.
+    //엔티티 조회 후 벌크성 update 실행 시 영속성 컨텍스트내에서는 update 이전 데이터이나,  실제 데이터는 update 이후 데이터이므로, 오차가 발생함.
+    //그래서 벌크성 수정쿼리 후에는 영속성컨텐스트를 다 날려버려야 한다.
+    @Test
+    public void bulkUpdate(){
+        //given
+        memberRepository.save(new Member("송하영", 30, teamA));
+        memberRepository.save(new Member("장규리", 31, teamA));
+        memberRepository.save(new Member("이나경", 32, teamA));
+        memberRepository.save(new Member("박지원", 33, teamA));
+        memberRepository.save(new Member("이새롬", 34, teamA));
+
+        //when
+        int resultCount = memberRepository.bulkAgePlus(30);
+
+        //then
+        assertEquals(resultCount, 5);
+    }
+
 }
