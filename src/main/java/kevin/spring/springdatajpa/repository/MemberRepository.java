@@ -58,8 +58,9 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     countQuery = "select count(m.username) from Member m where m.age = :age")
     Page<Member> findByAgeJpql(@Param("age") int age, Pageable pageable);
 
-    //update 쿼리를 사용시에는 @Modifying 어노테이션을 꼭 붙여줘야 한다.
-    @Modifying
+    //update 쿼리를 사용시에는 @Modifying 어노테이션을 꼭 붙여줘야 실행됨.
+    //clearAutomatically = true : 쿼리실행 후 영속성 컨텍스트를 clear처리 해준다.
+    @Modifying(clearAutomatically = true)
     @Query("update Member m set m.age = m.age + 1 where m.age >= :age")
     int bulkAgePlus(@Param("age") int age);
 }
