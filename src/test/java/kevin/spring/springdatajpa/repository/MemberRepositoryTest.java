@@ -48,8 +48,6 @@ class MemberRepositoryTest {
         memberRepository.save(member1);
         memberRepository.save(member2);
         memberRepository.save(member3);
-
-
     }
 
     @Test
@@ -179,7 +177,7 @@ class MemberRepositoryTest {
 
     }
 
-    //벌크성 수정 쿼리
+    //** 벌크성 수정 쿼리
     //jpa에서는 기본적으로 조회한엔티티의 값을 변경 하면 더티체킹으로 업데이트가 자동실행되나,
     //별도로 여러row의 데이터를 일괄 수정 시에는 엔티티를 모두 조회해서 값을 수정하는 것보다 update 쿼리를 직접 작성해주는게 더 효율적일 때도 있다.
     //그러나 벌크성 수정 쿼리는 위험성이 있으므로 안쓰는것이 좋다.
@@ -201,5 +199,7 @@ class MemberRepositoryTest {
         //then
         assertEquals(resultCount, 5);
     }
+
+    
 
 }
