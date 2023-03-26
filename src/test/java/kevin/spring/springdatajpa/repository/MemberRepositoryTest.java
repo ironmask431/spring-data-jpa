@@ -200,6 +200,6 @@ class MemberRepositoryTest {
         assertEquals(resultCount, 5);
     }
 
-    
+    //다음 수업
 
 }
