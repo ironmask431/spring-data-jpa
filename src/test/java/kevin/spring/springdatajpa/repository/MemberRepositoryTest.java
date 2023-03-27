@@ -204,4 +204,17 @@ class MemberRepositoryTest {
 
 
 
+    @Test
+    void test(){
+        String a = "기타";
+        String b = "12.5";
+        Float remain = 30.5f;
+        try{
+            //System.out.println(remain / Float.valueOf(a));
+            System.out.println(remain / Float.valueOf(b));
+        }catch (NumberFormatException e){
+
+        }
+        System.out.println("end");
+    }
 }
