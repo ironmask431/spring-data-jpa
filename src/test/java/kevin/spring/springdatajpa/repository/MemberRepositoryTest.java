@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -35,8 +36,76 @@ class MemberRepositoryTest {
     Team teamA;
     Team teamB;
 
-    @BeforeEach
-    void init(){
+    @Autowired
+    EntityManager em;
+
+    @Test
+    void testMember() {
+        member1 = new Member("장규리", 10, teamA);
+        memberRepository.save(member1);
+
+        Member savedMember = memberRepository.findById(member1.getId()).orElseThrow(()-> new IllegalArgumentException());
+        Assertions.assertEquals(member1.getId(), savedMember.getId());
+        Assertions.assertEquals(member1.getUsername(), savedMember.getUsername());
+    }
+
+    @Test
+    void basicCRUD(){
+        member1 = new Member("장규리", 10, teamA);
+        member2 = new Member("장규리", 20, teamA);
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+
+        //단건 조회 검증
+        Member findMember1 = memberRepository.findById(member1.getId()).get();
+        Member findMember2 = memberRepository.findById(member2.getId()).get();
+        assertEquals(findMember1, member1);
+        assertEquals(findMember2, member2);
+
+        //리스트 조회 검증
+        List<Member> all = memberRepository.findAll();
+        assertEquals(all.size(), 2);
+
+        //카운트 검증
+        long count = memberRepository.count();
+        assertEquals(count, 2);
+
+        //삭제 검증
+        memberRepository.delete(member1);
+        memberRepository.delete(member2);
+        count = memberRepository.count();
+        assertEquals(count, 0);
+    }
+
+    @Test
+    void findByUsernameAndAgeGreaterThen(){
+        member1 = new Member("장규리", 10, teamA);
+        member2 = new Member("장규리", 20, teamA);
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+
+        List<Member> result = memberRepository.findByUsernameAndAgeGreaterThan("장규리", 15);
+
+        assertEquals(result.get(0).getUsername(), "장규리");
+        assertEquals(result.get(0).getAge(), 20);
+        assertEquals(result.size(), 1);
+    }
+
+    @Test
+    void findUserByJPQL(){
+        member1 = new Member("장규리", 10, teamA);
+        member2 = new Member("장규리", 20, teamA);
+        member3 = new Member("송하영", 21, teamB);
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+        memberRepository.save(member3);
+
+        List<Member> result = memberRepository.findUser("장규리", 10);
+        assertEquals(result.get(0), member1);
+    }
+
+    @Test
+    void findMemberDto(){
         teamA = new Team("teamA");
         teamB = new Team("teamB");
         teamRepository.save(teamA);
@@ -48,55 +117,7 @@ class MemberRepositoryTest {
         memberRepository.save(member1);
         memberRepository.save(member2);
         memberRepository.save(member3);
-    }
 
-    @Test
-    void testMember() {
-        Member savedMember = memberRepository.findById(member1.getId()).orElseThrow(()-> new IllegalArgumentException());
-        Assertions.assertEquals(member1.getId(), savedMember.getId());
-        Assertions.assertEquals(member1.getUsername(), savedMember.getUsername());
-    }
-
-    @Test
-    void basicCRUD(){
-        //단건 조회 검증
-        Member findMember1 = memberRepository.findById(member1.getId()).get();
-        Member findMember2 = memberRepository.findById(member2.getId()).get();
-        assertEquals(findMember1, member1);
-        assertEquals(findMember2, member2);
-
-        //리스트 조회 검증
-        List<Member> all = memberRepository.findAll();
-        assertEquals(all.size(), 3);
-
-        //카운트 검증
-        long count = memberRepository.count();
-        assertEquals(count, 3);
-
-        //삭제 검증
-        memberRepository.delete(member1);
-        memberRepository.delete(member2);
-        count = memberRepository.count();
-        assertEquals(count, 0);
-    }
-
-    @Test
-    void findByUsernameAndAgeGreaterThen(){
-        List<Member> result = memberRepository.findByUsernameAndAgeGreaterThan("장규리", 15);
-
-        assertEquals(result.get(0).getUsername(), "장규리");
-        assertEquals(result.get(0).getAge(), 20);
-        assertEquals(result.size(), 1);
-    }
-
-    @Test
-    void findUser(){
-        List<Member> result = memberRepository.findUser("장규리", 10);
-        assertEquals(result.get(0), member1);
-    }
-
-    @Test
-    void findMemberDto(){
         List<MemberDto> memberDtos = memberRepository.findMemberDto();
         for(MemberDto memberDto : memberDtos){
             System.out.println("leesh - dto = "+memberDto);
@@ -105,6 +126,18 @@ class MemberRepositoryTest {
 
     @Test
     void findBynames(){
+        teamA = new Team("teamA");
+        teamB = new Team("teamB");
+        teamRepository.save(teamA);
+        teamRepository.save(teamB);
+
+        member1 = new Member("장규리", 10, teamA);
+        member2 = new Member("장규리", 20, teamA);
+        member3 = new Member("송하영", 21, teamB);
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+        memberRepository.save(member3);
+
         List<Member> members = memberRepository.findByNames(Arrays.asList("장규리", "송하영"));
         for(Member member : members){
             System.out.println("leesh - member = "+member);
@@ -113,16 +146,23 @@ class MemberRepositoryTest {
 
     @Test
     void returnType() throws Exception {
+        member1 = new Member("장규리", 10, teamA);
+        member2 = new Member("장규리", 20, teamA);
+        member3 = new Member("송하영", 21, teamB);
+        memberRepository.save(member1);
+        memberRepository.save(member2);
+        memberRepository.save(member3);
+
         //컬렉션타입으로 조회 시 값이 없으면 spirng data jpa 에서 빈 empty 컬렉션을 반환해준다.
-        List<Member> memberList = memberRepository.findListByUsername("장규리");
+        List<Member> memberList = memberRepository.findListByUsername("박지원");
         //엔티티 단독 조회 시 result = 0 이면 null 로 리턴됨.
         //엔티티 단독 조회 시 result2개 이상이면 exception 발생
-        Member member = memberRepository.findMemberByUsername("장규리");
+        Member member = memberRepository.findMemberByUsername("송하영");
         //Optional<엔티티>타입으로 조회 시 result = 0 이면 비어있는 Optional 리턴.
         //Optional<엔티티>타입으로 조회 시 result2개 이상이면 exception 발생
         Optional<Member> optional = memberRepository.findOptionalByUsername("송하영");
 
-        System.out.println(memberList.get(0));
+        //System.out.println(memberList.get(0));
         System.out.println(memberList.size());
         System.out.println(member);
         System.out.println(optional.orElseThrow(() -> new Exception()));
@@ -140,6 +180,9 @@ class MemberRepositoryTest {
     @Test
     void paging() {
         //given
+        teamA = new Team("teamA");
+        teamRepository.save(teamA);
+
         memberRepository.save(new Member("양연제1", 15, teamA));
         memberRepository.save(new Member("양연제2", 15, teamA));
         memberRepository.save(new Member("양연제3", 15, teamA));
@@ -182,8 +225,9 @@ class MemberRepositoryTest {
     //별도로 여러row의 데이터를 일괄 수정 시에는 엔티티를 모두 조회해서 값을 수정하는 것보다 update 쿼리를 직접 작성해주는게 더 효율적일 때도 있다.
     //그러나 벌크성 수정 쿼리는 위험성이 있으므로 안쓰는것이 좋다.
     //엔티티 조회 후 벌크성 update 실행 시 영속성 컨텍스트내에서는 update 이전 데이터이나,  실제 데이터는 update 이후 데이터이므로, 오차가 발생함.
-    //그래서 벌크성 수정쿼리 후에는 영속성컨텐스트를 다 날려버려야 한다. (벌크성 수정쿼리를 사용할 시에는 다른 서비스로직과 트랙잰션을 같이 쓰지않도록 하는게 필요함.)
-    //repository 메소드에서 (@Modifying(clearAutomatically = true) 사용하는 방법이있음.)
+    //그래서 벌크성 수정쿼리 후에는 영속성컨텐스트를 다 날려버려야 한다. (벌크성 수정쿼리를 사용할 시에는 다른 서비스로직과 트랙잰션을 같이 쓰지않도록 하는걸 추천)
+    //EntityManager 를 사용해서 em.flush(); em.clear(); 하는 방법
+    //repository 메소드에서 (@Modifying(clearAutomatically = true) 사용하는 방법이있음.
     @Test
     public void bulkUpdate(){
         //given
@@ -201,20 +245,22 @@ class MemberRepositoryTest {
     }
 
     //엔티티 그래프 fetchJoin
-
-
-
     @Test
-    void test(){
-        String a = "기타";
-        String b = "12.5";
-        Float remain = 30.5f;
-        try{
-            //System.out.println(remain / Float.valueOf(a));
-            System.out.println(remain / Float.valueOf(b));
-        }catch (NumberFormatException e){
+    void findMemberLazy(){
+        Team teamA = new Team("teamA");
+        Team teamB = new Team("teamB");
+        teamRepository.save(teamA);
+        teamRepository.save(teamB);
 
-        }
-        System.out.println("end");
+        Member memberA = new Member("memberA",20, teamA);
+        Member memberB = new Member("memberB",21, teamB);
+        memberRepository.save(memberA);
+        memberRepository.save(memberB);
+
+        em.flush();
+        em.clear();
+
+        //when
+        List<Member> members = memberRepository.findAll();
     }
 }
