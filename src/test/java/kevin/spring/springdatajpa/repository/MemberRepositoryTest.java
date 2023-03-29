@@ -260,7 +260,50 @@ class MemberRepositoryTest {
         em.flush();
         em.clear();
 
+        System.out.println("======================1");
         //when
         List<Member> members = memberRepository.findAll();
+        //이 시점엔 Team을 select 하지 않음. (Team을 FetchType=Lazy 로 설정했기 때문에)
+        //이 시점에 조회되는 Team proxy 가짜 객체임.
+
+        //N + 1 문제. Member를 10개 select 하면 Team 도 10번 select 가 필요하다.
+        for(Member member : members){
+            System.out.println("Memeber = " + member.getUsername());
+            System.out.println("Memeber.team = " + member.getTeam().getName());
+            //이 시점에 추가로 Team을 select 한다.
+            //Member 가 2명이기 때문에 각 Member 에 해당하는 Team 을 조회하는 쿼리가 2번 더 실행됨.
+        }
+        System.out.println("======================2");
+        List<Member> members2 = memberRepository.findMemberFetchJoin();
+        //fetchJoin 실행 시 member 조회 시 연관된 Team도 한번에 같이 조회한다.
+
+        for(Member member : members2){
+            System.out.println("Memeber = " + member.getUsername());
+            System.out.println("Memeber.team = " + member.getTeam().getName());
+            //여기서 쿼리가 추가로 실행되지 않음.
+        }
+
+        System.out.println("======================3");
+        List<Member> members3 = memberRepository.findMemberFetchJoin2();
+        //fetchJoin 실행 시 member 조회 시 연관된 Team도 한번에 같이 조회한다.
+
+        for(Member member : members3){
+            System.out.println("Memeber = " + member.getUsername());
+            System.out.println("Memeber.team = " + member.getTeam().getName());
+            //여기서 쿼리가 추가로 실행되지 않음.
+        }
+
+        System.out.println("======================4");
+        List<Member> members4 = memberRepository.findEntityGraphByUsername("memberA");
+        //fetchJoin 실행 시 member 조회 시 연관된 Team도 한번에 같이 조회한다.
+
+        for(Member member : members4){
+            System.out.println("Memeber = " + member.getUsername());
+            System.out.println("Memeber.team = " + member.getTeam().getName());
+            //여기서 쿼리가 추가로 실행되지 않음.
+        }
+
+        //fetchType = Lazy로 되어잇는 연관관계의 객체를 자주 사용하는 경우
+        //그냥 조회 시 추가 쿼리가 자주 발생하므로 이런 경우에는 fetchJoin으로 조회하면 쿼리 실행 개수를 줄일 수 있음.
     }
 }
