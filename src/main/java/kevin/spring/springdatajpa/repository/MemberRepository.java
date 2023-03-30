@@ -2,15 +2,12 @@ package kevin.spring.springdatajpa.repository;
 
 import kevin.spring.springdatajpa.dto.MemberDto;
 import kevin.spring.springdatajpa.entity.Member;
-import org.hibernate.annotations.Entity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 
+import javax.persistence.LockModeType;
 import java.util.List;
 import java.util.Optional;
 
@@ -79,5 +76,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @EntityGraph(attributePaths = {"team"})
     List<Member> findEntityGraphByUsername(@Param("username") String username);
 
-
+    //Lock - 자세한 내용에 대한 추가정리 필요
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    List<Member> findLockByUsername(@Param("username") String username);
 }

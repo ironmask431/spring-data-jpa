@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -36,7 +37,7 @@ class MemberRepositoryTest {
     Team teamA;
     Team teamB;
 
-    @Autowired
+    @PersistenceContext
     EntityManager em;
 
     @Test
@@ -305,5 +306,16 @@ class MemberRepositoryTest {
 
         //fetchType = Lazy로 되어잇는 연관관계의 객체를 자주 사용하는 경우
         //그냥 조회 시 추가 쿼리가 자주 발생하므로 이런 경우에는 fetchJoin으로 조회하면 쿼리 실행 개수를 줄일 수 있음.
+    }
+
+    //JPA  Lock 사용법- Lock 부분은 복잡하므로 별도 정리가 필요함.
+    @Test
+    void lock(){
+        //given
+        Member member1 = new Member("member1", 20);
+        memberRepository.save(member1);
+
+        //when
+        List<Member> result = memberRepository.findLockByUsername("member1");
     }
 }
