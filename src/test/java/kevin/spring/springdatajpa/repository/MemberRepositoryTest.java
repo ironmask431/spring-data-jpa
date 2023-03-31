@@ -319,4 +319,33 @@ class MemberRepositoryTest {
     }
 
     //사용자 정의 리포지토리 구현 (코드 생략)
+
+    //Auditing
+    @Test
+    void eventBaseEntity() throws Exception{
+        //given
+        Member member1 = new Member("member1", 20);
+        memberRepository.save(member1);
+
+        Thread.sleep(100);
+        member1.setUsername("member2");
+
+        em.flush();
+        em.clear();
+
+        //when
+        Member findMember = memberRepository.findById(member1.getId()).get();
+
+        //then
+        System.out.println("findMember.getCreateDate = "+findMember.getCreateDate());
+        System.out.println("findMember.getLastModifiedDate = "+findMember.getLastModifiedDate());
+        System.out.println("findMember.getCreateBy = "+findMember.getCreateBy());
+        System.out.println("findMember.getLastModifiedBy = "+findMember.getLastModifiedBy());
+
+        // 엔티티 입력시간, 수정시간이 자동적으로 입력,업데이트 된것을 확인 할 수 있다.
+//        findMember.getCreateDate       = 2023-03-31T19:12:55.003011
+//        findMember.getLastModifiedDate = 2023-03-31T19:12:55.184886
+
+    }
+
 }
