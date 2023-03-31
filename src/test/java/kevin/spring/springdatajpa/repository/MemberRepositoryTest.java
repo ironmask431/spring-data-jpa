@@ -317,4 +317,6 @@ class MemberRepositoryTest {
         //when
         List<Member> result = memberRepository.findLockByUsername("member1");
     }
+
+    //사용자 정의 리포지토리 구현 (코드 생략)
 }
