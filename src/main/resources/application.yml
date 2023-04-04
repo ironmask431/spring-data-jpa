@@ -20,6 +20,13 @@ spring:
     #create 실행 후 data.sql에 쿼리 실행하도록 설정
     defer-datasource-initialization: true
 
+  #spring-data-jpa page default 글로벌 값 설정가능.
+  data:
+    web:
+      pageable:
+        default-page-size: 10
+        max-page-size: 100
+
   devtools:
     livereload:
       enabled: true
