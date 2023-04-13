@@ -1,6 +1,8 @@
 package kevin.spring.springdatajpa.repository;
 
 import kevin.spring.springdatajpa.dto.MemberDto;
+import kevin.spring.springdatajpa.dto.UsernameOnly;
+import kevin.spring.springdatajpa.dto.UsernameOnlyDto;
 import kevin.spring.springdatajpa.entity.Member;
 import kevin.spring.springdatajpa.entity.Team;
 import org.junit.jupiter.api.Assertions;
@@ -346,6 +348,51 @@ class MemberRepositoryTest {
 //        findMember.getCreateDate       = 2023-03-31T19:12:55.003011
 //        findMember.getLastModifiedDate = 2023-03-31T19:12:55.184886
 
+    }
+
+    //Projection
+    //별도로 만든 인터페이스 타입으로 특정 컬럼값만 받을 수 있다. (네이티브 쿼리에서도 유용하게 사용)
+    @Test
+    void projections(){
+
+        Team teamA = new Team("teamA");
+        teamRepository.save(teamA);
+
+        Member memberA = new Member("memberA",20, teamA);
+        Member memberB = new Member("memberB",21, teamA);
+        memberRepository.save(memberA);
+        memberRepository.save(memberB);
+
+        em.flush();
+        em.clear();
+
+        //when
+        //interface 형태로 가져오기
+        List<UsernameOnly> result = memberRepository.findInterfaceByUsername("memberA");
+
+        for(UsernameOnly usernameOnly : result){
+            System.out.println("1. interface="+usernameOnly.getUsername()); //usernameOnly=memberA
+            Assertions.assertEquals(usernameOnly.getUsername(), "memberA");
+        }
+
+        //dto 형태로 가져오기
+        List<UsernameOnlyDto> result2 = memberRepository.findDtoByUsername("memberA");
+
+        for(UsernameOnlyDto dto : result2){
+            System.out.println("2. dto="+dto.getUsername()); //usernameOnly=memberA
+            Assertions.assertEquals(dto.getUsername(), "memberA");
+        }
+        //위를 활용하면 엔티티를 조회해서 다시 dto로 변환하고 이런 귀찮은것을 생략해도 기능.
+
+        //동적타입으로도 가능
+        List<UsernameOnlyDto> result3 = memberRepository.findTypeByUsername("memberA", UsernameOnlyDto.class);
+
+        for(UsernameOnlyDto dto : result3){
+            System.out.println("3. type="+dto.getUsername()); //usernameOnly=memberA
+            Assertions.assertEquals(dto.getUsername(), "memberA");
+        }
+
+        System.out.println("======================");
     }
 
 }

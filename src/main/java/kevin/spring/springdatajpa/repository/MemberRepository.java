@@ -1,6 +1,8 @@
 package kevin.spring.springdatajpa.repository;
 
 import kevin.spring.springdatajpa.dto.MemberDto;
+import kevin.spring.springdatajpa.dto.UsernameOnly;
+import kevin.spring.springdatajpa.dto.UsernameOnlyDto;
 import kevin.spring.springdatajpa.entity.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -79,4 +81,19 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     //Lock - 자세한 내용에 대한 추가정리 필요
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     List<Member> findLockByUsername(@Param("username") String username);
+
+
+    //Projection
+    //별도로 만든 인터페이스 타입으로 특정 컬럼값만 받을 수 있다. (네이티브 쿼리에서도 유용하게 사용)
+    //find와 ~By 사이에는 아무단어나 넣어도됨.
+
+    //interface 타입으로 받기
+    List<UsernameOnly> findInterfaceByUsername(@Param("username") String username);
+
+    //Dto 클래스타입으로 받기
+    List<UsernameOnlyDto> findDtoByUsername(@Param("username") String username);
+
+    //동적타입으로 받기도 가능
+    <T> List<T> findTypeByUsername(@Param("username") String username, Class<T> type);
+
 }
