@@ -391,7 +391,6 @@ class MemberRepositoryTest {
             System.out.println("3. type="+dto.getUsername()); //usernameOnly=memberA
             Assertions.assertEquals(dto.getUsername(), "memberA");
         }
-
         System.out.println("======================");
     }
 

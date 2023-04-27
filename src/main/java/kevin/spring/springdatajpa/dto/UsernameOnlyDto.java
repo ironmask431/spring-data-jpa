@@ -10,7 +10,6 @@ public class UsernameOnlyDto {
     private String username;
 
     //주의 : 기본생성자가 있을 경우 엔티티타입이 dto로 변환이 안됨...! 기본생성자 빼기
-
     public UsernameOnlyDto(String username) {
         this.username = username;
     }
