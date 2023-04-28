@@ -96,4 +96,17 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     //동적타입으로 받기도 가능
     <T> List<T> findTypeByUsername(@Param("username") String username, Class<T> type);
 
+    //네이티브 쿼리
+    @Query(value = "select * from member where username = ?", nativeQuery = true)
+    Member findByNativeQuery(String username);
+
+
+    //네이티브 쿼리 - 프로젝션, Pageable 사용가능 (단, 네이티브 쿼리이기 때문에 카운트 쿼리를 별도로 추가해줘야함.)
+    //프로젝션(인터페이스)를 사용해서 네이티브 쿼리 에서 조회한 컬럼들을 받을 수 있다.
+    @Query(value = "select m.member_id as id, m.username as username, t.name as teamName " +
+        "from member m left join team t "
+        , countQuery = "select count(*) from member"
+        , nativeQuery = true)
+    Page<MemberProjection> findByNativeProjection(Pageable pageable);
+
 }
