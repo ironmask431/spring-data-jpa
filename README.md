@@ -15,8 +15,19 @@
 10. Entity, List<Entity>, Optional<Entity> 반환타입으로 조회가능
 11. 조회 시 결과값이 없으면 List<Entity>타입은 Empty List로 반환됨. Entity 는 NULL, Optional 은 Empty Optional 리턴 
 12. Page, pageable, PageRequest 을 이용하여 페이징처리
-13. fetchJoin 과 @EntityGraph 개념
-14. 벌크성 수정 쿼리
+13. N + 1 문제, fetchJoin 과 @EntityGraph 개념
+    - N + 1 문제. 연관된 entity조회 시 해당 entity들을 조회하는 쿼리가 각각 추가로 실행되는 문제
+    - fetchJoin 사용 시 Lazy로 연관된 entity도 처음 조회 쿼리에서 같이 조회한다.  
+    - fetchJoin 방법 : JPQL 쿼리사용 "from Member m left join fetch m.team"
+    - @EntityGraph 를 사용하면 JPQL을 사용하지 않고 fetchJoin 을 쓸수 있음.
+      ```java
+      //fetchJoin 을 jpql을 쓰지않은 메소드 쿼리에서도 사용가능하다.
+      @EntityGraph(attributePaths = {"team"})
+      List<Member> findEntityGraphByUsername(@Param("username") String username);
+      ``` 
+    - fetchType = Lazy로 되어잇는 연관관계의 객체를 자주 사용하는 경우
+    - 그냥 조회 시 추가 쿼리가 자주 발생하므로 이런 경우에는 fetchJoin으로 조회하면 쿼리 실행 개수를 줄일 수 있음.
+15. 벌크성 수정 쿼리
 ```
 jpa에서는 기본적으로 조회한엔티티의 값을 변경 하면 더티체킹으로 업데이트가 자동실행되나,
 별도로 여러row의 데이터를 일괄 수정 시에는 엔티티를 모두 조회해서 값을 수정하는 것보다
