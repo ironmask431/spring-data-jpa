@@ -10,7 +10,6 @@
    - findAll, findById, save 등.
 7. 쿼리메소드 참고   
    - https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods.query-creation
-8. JPQL 사용방법, nativeQuery 사용방법
 9. JPQL 사용하여 DTO클래스 반환 타입으로 조회하기
 10. Entity, List<Entity>, Optional<Entity> 반환타입으로 조회가능
 11. 조회 시 결과값이 없으면 List<Entity>타입은 Empty List로 반환됨. Entity 는 NULL, Optional 은 Empty Optional 리턴 
@@ -40,3 +39,12 @@ update 쿼리를 직접 작성해주는게 더 효율적일 때도 있다.
 EntityManager 를 사용해서 em.flush(); em.clear(); 하는 방법
 repository 메소드에서 (@Modifying(clearAutomatically = true) 사용하는 방법이있음.
 ```
+16. jpa Hint & Lock (자세한 내용은 패스 있다는 것만 알고 넘어가자)
+17. Projection - jpa쿼리 반환타입을 원하는 속성만 interface, dto 으로 만들어서 받을 수 있다.
+    - Projection을 활용하면 Entity로 조회 -> dto로 변환 이런작업을 하지않아도 됨.
+    - 별도로 만든 dto 클래스 타입으로 repository 쿼리에서 특정 컬럼값만 받을 수 있다.
+    - 필드명과 조회 엔티티 필드명이 같아야 조회됨.
+    - * 주의 : 기본생성자가 있을 경우 엔티티타입이 dto로 변환이 안됨...! 기본생성자 빼기
+    - 주로 nativeQuery로 데이터 조회시 반환타입을 interface로 만들어서 활용함.
+19. 네이티브쿼리로 페이징 처리를 하고 싶을때 projection, inteface를 사용함.
+    - 단, 네이티브 쿼리이기 때문에 카운트 쿼리를 항상 별도로 명시해줘야 한다.
