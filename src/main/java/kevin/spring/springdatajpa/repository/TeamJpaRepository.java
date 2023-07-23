@@ -8,6 +8,9 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * spring data jpa 를 사용하지않고 jpa EntityManager 를 직접 사용하는 순수jpa 방식
+ */
 @Repository
 public class TeamJpaRepository {
 
