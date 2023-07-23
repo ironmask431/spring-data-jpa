@@ -46,5 +46,6 @@ repository 메소드에서 (@Modifying(clearAutomatically = true) 사용하는 �
     - 필드명과 조회 엔티티 필드명이 같아야 조회됨.
     - * 주의 : 기본생성자가 있을 경우 엔티티타입이 dto로 변환이 안됨...! 기본생성자 빼기
     - 주로 nativeQuery로 데이터 조회시 반환타입을 interface로 만들어서 활용함.
+18. 네이티브 쿼리 사용방법.  
 19. 네이티브쿼리로 페이징 처리를 하고 싶을때 projection, inteface를 사용함.
     - 단, 네이티브 쿼리이기 때문에 카운트 쿼리를 항상 별도로 명시해줘야 한다.
