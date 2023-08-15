@@ -4,7 +4,7 @@
 ### 이 강의에서 배운 것
 1. jpa Entity 에서 protected 생성자가 필요한 이유.
    - 무분별한 객체 생성방지(PUBLIC), 하지만 private로는 선언불가(JPA스펙상)
-3. Spring data jpa 를 사용할 repository 선언방법
+3. Spring data jpa 를 사용할 Repository 선언방법
    - public interface 인터페이스명 extends JpaRepository<Entity클래스명, Long>
 5. spring data jpa repository가 제공하는 기본 메소드드들.
    - findAll, findById, save 등.
@@ -14,7 +14,8 @@
 10. Entity, List<Entity>, Optional<Entity> 반환타입으로 조회가능
 11. 조회 시 결과값이 없으면 List<Entity>타입은 Empty List로 반환됨. Entity 는 NULL, Optional 은 Empty Optional 리턴 
 12. Page, pageable, PageRequest 을 이용하여 페이징처리
-13. N + 1 문제, fetchJoin 과 @EntityGraph 개념
+13. 
+14. N + 1 문제, fetchJoin 과 @EntityGraph 개념
     - N + 1 문제. 연관된 entity조회 시 해당 entity들을 조회하는 쿼리가 각각 추가로 실행되는 문제
     - fetchJoin 사용 시 Lazy로 연관된 entity도 처음 조회 쿼리에서 같이 조회한다.  
     - fetchJoin 방법 : JPQL 쿼리사용 "from Member m left join fetch m.team"
