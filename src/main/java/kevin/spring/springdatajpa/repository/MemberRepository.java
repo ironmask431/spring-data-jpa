@@ -84,7 +84,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
 
     //Projection
-    //별도로 만든 인터페이스 타입으로 특정 컬럼값만 받을 수 있다. (네이티브 쿼리에서도 유용하게 사용)
+    //별도로 만든 인터페이스 타입으로 특정 컬럼값만 받을 수 있다. (네이티브 쿼리에서 주로 사용)
     //find와 ~By 사이에는 아무단어나 넣어도됨.
 
     //interface 타입으로 받기

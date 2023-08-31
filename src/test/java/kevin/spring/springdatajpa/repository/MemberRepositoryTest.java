@@ -200,7 +200,7 @@ class MemberRepositoryTest {
         Page<Member> page = memberRepository.findByAge(age, pageRequest);
 
         //jpql 사용 시
-        //Page<Member> page = memberRepository.findByAgeJpql(age, pageRequest);
+        Page<Member> page_jpql = memberRepository.findByAgeJpql(age, pageRequest);
 
         //엔티티로 조회한 Page<entity> 를 Page<dto> 로 변환하는 법
         Page<MemberDto> toMap = page.map(member -> new MemberDto(member.getId(),member.getUsername(),member.getTeam().getName()));
